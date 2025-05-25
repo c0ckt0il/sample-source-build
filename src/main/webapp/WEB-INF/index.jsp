@@ -1,9 +1,17 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
-         pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ page import="java.net.InetAddress" %>
+<%
+    String hostname = "unknown";
+    try {
+        hostname = InetAddress.getLocalHost().getHostName();
+    } catch (Exception e) {
+        hostname = "Error: " + e.getMessage();
+    }
+%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Example</title>
 </head>
 <body>
@@ -22,7 +30,9 @@
     document.querySelector('body').style.backgroundColor='white';
     document.querySelector('body').style.color='black';
     ">
-</body>
+
+<hr>
+<p><strong>현재 Pod의 Hostname:</strong> <%= hostname %></p>
 
 <script>
     var text_h1 = document.querySelector('.text_h1');
@@ -35,4 +45,5 @@
         text_h2.style.color = 'blue';
     };
 </script>
+</body>
 </html>
