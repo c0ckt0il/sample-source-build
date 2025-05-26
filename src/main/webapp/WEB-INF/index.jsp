@@ -7,8 +7,8 @@
     <title>Example</title>
 </head>
 <body>
-<h1 class="text_h1">글자를 클릭하면 빨간색으로 변경</h1>
-<h4 class="text_h2">글자를 클릭하면 파란색으로 변경</h4>
+<h1 class="text_h1">글자를 클릭하면 빨간색으로 변경!!</h1>
+<h4 class="text_h2">글자를 클릭하면 파란색으로 변경!!</h4>
 
 <h3>배경색과 글자색 변경</h3>
 <input type="button" value="Black" onclick="
