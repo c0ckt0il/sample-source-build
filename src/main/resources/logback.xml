@@ -1,0 +1,14 @@
+<configuration>
+    <appender name="OpenTelemetry"
+              class="io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender">
+    </appender>
+
+    <logger name="OTLP" additivity="false">
+        <appender-ref ref="OpenTelemetry"/>
+        <level value="INFO"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="OpenTelemetry"/>
+    </root>
+</configuration>
