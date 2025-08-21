@@ -13,8 +13,8 @@ public class DemoApplication {
 
     
     public static void main(String[] args) {
-        logger.info("Application starting...COCKTAIL LOG SERVICE TEST");  // 애플리케이션 시작 로그
         SpringApplication.run(DemoApplication.class, args);
+        logger.info("Application starting...COCKTAIL LOG SERVICE TEST");  // 애플리케이션 시작 로그
         logger.info("Application started successfully.");
     }
 
