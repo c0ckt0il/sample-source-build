@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import jakarta.annotation.PreDestroy;
 
 @SpringBootApplication
 public class DemoApplication {
@@ -19,8 +18,4 @@ public class DemoApplication {
         logger.info("Application started successfully.");
     }
 
-    @PreDestroy
-    public void onExit() {
-        logger.info("Application shutting down...");  // 종료 로그
-    }
 }
