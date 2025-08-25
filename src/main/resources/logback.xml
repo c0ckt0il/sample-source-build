@@ -5,14 +5,21 @@
               class="io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender">
     </appender>
 
-    <!-- 특정 로거 (OTLP 라는 이름을 가진 로거) -->
+    <!-- Console Appender (stdout 용) -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 특정 로거 (OTLP: 애플리케이션 로그만) -->
     <logger name="OTLP" additivity="false" level="INFO">
         <appender-ref ref="OpenTelemetry"/>
     </logger>
 
-    <!-- 전체(root) 로거 -->
+    <!-- 전체(root): Spring Boot 기본 로그는 Console 로만 -->
     <root level="INFO">
-        <appender-ref ref="OpenTelemetry"/>
+        <appender-ref ref="CONSOLE"/>
     </root>
 
 </configuration>
