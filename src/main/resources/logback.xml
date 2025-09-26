@@ -5,10 +5,30 @@
               class="io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender">
     </appender>
 
-    <!-- Console Appender (stdout 용) -->
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+    <!-- Console Appender (stdout, JSON 포맷) -->
+    <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <!-- timestamp -->
+                <timestamp>
+                    <timeZone>UTC</timeZone>
+                </timestamp>
+
+                <!-- log level -->
+                <logLevel/>
+
+                <!-- thread -->
+                <threadName/>
+
+                <!-- logger name -->
+                <loggerName/>
+
+                <!-- message -->
+                <message/>
+
+                <!-- stack trace -->
+                <stackTrace/>
+            </providers>
         </encoder>
     </appender>
 
@@ -17,9 +37,9 @@
         <appender-ref ref="OpenTelemetry"/>
     </logger>
 
-    <!-- 전체(root): Spring Boot 기본 로그는 Console 로만 -->
+    <!-- 전체(root): JSON 로그로 출력 -->
     <root level="INFO">
-        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="JSON_CONSOLE"/>
     </root>
 
 </configuration>
