@@ -1,7 +1,7 @@
 <configuration>
     <!-- Console 로그는 stdout으로 -->
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
+    <appender name="OTLP" class="io.opentelemetry.instrumentation.logback.appender.v1_0.OtlpLogbackAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} trace_id=%X{trace_id} span_id=%X{span_id} - %msg%n</pattern>
         </encoder>
     </appender>
