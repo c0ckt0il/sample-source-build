@@ -1,45 +1,19 @@
-<configuration>
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
 
-    <!-- OpenTelemetry Appender -->
-    <appender name="OpenTelemetry"
-              class="io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender">
-    </appender>
-
-    <!-- Console Appender (stdout, JSON 포맷) -->
-    <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
-            <providers>
-                <!-- timestamp -->
-                <timestamp>
-                    <timeZone>UTC</timeZone>
-                </timestamp>
-
-                <!-- log level -->
-                <logLevel/>
-
-                <!-- thread -->
-                <threadName/>
-
-                <!-- logger name -->
-                <loggerName/>
-
-                <!-- message -->
-                <message/>
-
-                <!-- stack trace -->
-                <stackTrace/>
-            </providers>
+    <!-- Console Appender -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} trace_id: %X{trace_id} span_id: %X{span_id} trace_flags: %X{trace_flags} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- 특정 로거 (OTLP: 애플리케이션 로그만) -->
-    <logger name="OTLP" additivity="false" level="INFO">
-        <appender-ref ref="OpenTelemetry"/>
-    </logger>
+    <!-- OpenTelemetry Appender -->
+    <appender name="OpenTelemetryAppender" class="io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender" />
 
-    <!-- 전체(root): JSON 로그로 출력 -->
+    <!-- Root Logger -->
     <root level="INFO">
-        <appender-ref ref="JSON_CONSOLE"/>
+        <appender-ref ref="Console"/>
+        <appender-ref ref="OpenTelemetryAppender"/>
     </root>
-
 </configuration>
