@@ -41,12 +41,6 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>5.3.19</version>
-        </dependency>
-
         <!-- OpenTelemetry Log4j2 Appender -->
         <dependency>
             <groupId>io.opentelemetry.instrumentation</groupId>
@@ -54,6 +48,7 @@
             <version>2.0.0-alpha</version>
             <scope>runtime</scope>
             <exclusions>
+                <!-- 반드시 제거 -->
                 <exclusion>
                     <groupId>org.apache.logging.log4j</groupId>
                     <artifactId>log4j-to-slf4j</artifactId>
@@ -106,5 +101,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
