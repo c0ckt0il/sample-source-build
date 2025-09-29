@@ -6,6 +6,16 @@
         </encoder>
     </appender>
 
+    
+    <!-- 파일 출력 -->
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>/var/log/demo-app.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
     <!-- OTLP 로그 appender -->
     <appender name="OTLP" class="io.opentelemetry.instrumentation.logback.OtlpLogbackAppender">
         <endpoint>${OTEL_EXPORTER_OTLP_LOGS_ENDPOINT}</endpoint>
