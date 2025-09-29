@@ -9,8 +9,13 @@
     </appender>
 
     <!-- OpenTelemetry Appender -->
-    <appender name="OpenTelemetryAppender" class="io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender" />
+    <appender name="OpenTelemetry" class="io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender" />
 
+    <logger name="OTLP" additivity="false">
+        <appender-ref ref="OpenTelemetry"/>
+        <level value="INFO"/>
+    </logger>
+    
     <!-- Root Logger -->
     <root level="INFO">
         <appender-ref ref="Console"/>
