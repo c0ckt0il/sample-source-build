@@ -1,24 +1,23 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration scan="true">
-
-    <!-- Console Appender -->
-    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+<configuration>
+    <!-- Console 로그는 stdout으로 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} trace_id: %X{trace_id} span_id: %X{span_id} trace_flags: %X{trace_flags} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} trace_id=%X{trace_id} span_id=%X{span_id} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- OpenTelemetry Appender -->
-    <appender name="OpenTelemetry" class="io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender" />
+    <!-- OTLP 로그 appender -->
+    <appender name="OTLP" class="io.opentelemetry.instrumentation.logback.OtlpLogbackAppender">
+        <endpoint>${OTEL_EXPORTER_OTLP_LOGS_ENDPOINT}</endpoint>
+        <serviceName>${OTEL_SERVICE_NAME}</serviceName>
+        <resourceAttributes>service.name=${OTEL_SERVICE_NAME}</resourceAttributes>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} trace_id=%X{trace_id} span_id=%X{span_id} - %msg%n</pattern>
+        </encoder>
+    </appender>
 
-    <logger name="OTLP" additivity="false">
-        <appender-ref ref="OpenTelemetry"/>
-        <level value="INFO"/>
-    </logger>
-    
-    <!-- Root Logger -->
     <root level="INFO">
-        <appender-ref ref="Console"/>
-        <appender-ref ref="OpenTelemetryAppender"/>
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="OTLP" />
     </root>
 </configuration>
