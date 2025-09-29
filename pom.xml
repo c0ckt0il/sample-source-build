@@ -21,53 +21,24 @@
     </properties>
 
     <dependencies>
-        <!-- Spring Boot + Log4j2 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
-        </dependency>
-
-        <!-- Spring Web -->
+        <!-- Spring Web (logback 기본 사용) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
-        <!-- OpenTelemetry Log4j2 Appender -->
+        <!-- OpenTelemetry Logback Appender -->
         <dependency>
             <groupId>io.opentelemetry.instrumentation</groupId>
-            <artifactId>opentelemetry-log4j-appender-2.17</artifactId>
+            <artifactId>opentelemetry-logback-appender-1.0</artifactId>
             <version>2.0.0-alpha</version>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.logging.log4j</groupId>
-                    <artifactId>log4j-to-slf4j</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
-        <!-- Test (logback + log4j-to-slf4j 제거) -->
+        <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.logging.log4j</groupId>
-                    <artifactId>log4j-to-slf4j</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- JSON 처리 -->
