@@ -1,0 +1,1 @@
+FROM paas-regi.cocktailcloud.io/library/nginx:0.2
