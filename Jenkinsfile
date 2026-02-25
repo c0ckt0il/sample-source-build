@@ -1,6 +1,10 @@
 pipeline {
     agent any
-
+    
+    tools {
+        maven "maven-3.9" 
+    }
+    
     environment {
         // 사용할 이미지 이름 (도커 허브 등)
         IMAGE_NAME = "c0ckt0il/sample-app"
