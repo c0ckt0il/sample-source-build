@@ -1,5 +1,29 @@
 pipeline {
-    agent any
+    agent {
+        kubernetes {
+            yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: maven
+    image: maven:3.9-eclipse-temurin-17
+    command: ['cat']
+    tty: true
+  - name: docker
+    image: docker:24.0.7  # 도커 명령어가 포함된 이미지
+    command: ['cat']
+    tty: true
+    volumeMounts:
+    - name: dockersock
+      mountPath: /var/run/docker.sock
+  volumes:
+  - name: dockersock
+    hostPath:
+      path: /var/run/docker.sock
+"""
+        }
+    }
     
     tools {
         maven "maven-3.9" 
