@@ -7,6 +7,10 @@ pipeline {
     
     environment {
         // 사용할 이미지 이름 (도커 허브 등)
+        HARBOR_URL = "10.30.20.251" 
+        IMAGE_NAME = "10.30.20.251/demo/jenkins-build-app"
+        TAG = "${env.BUILD_NUMBER}"
+        
         IMAGE_NAME = "c0ckt0il/sample-app"
         TAG = "${env.BUILD_NUMBER}" // 빌드 번호를 태그로 사용
     }
@@ -31,8 +35,15 @@ pipeline {
                 script {
                     // 도커 빌드 및 레지스트리 푸시
                     echo "Building Docker image: ${IMAGE_NAME}:${TAG}"
-                    // sh "docker build -t ${IMAGE_NAME}:${TAG} ."
-                    // sh "docker push ${IMAGE_NAME}:${TAG}"
+                    
+                    // 이미지 빌드
+                    dockerImage = docker.build("${IMAGE_NAME}:${TAG}", "-f Dockerfile .")
+
+                    // 2. Harbor 레지스트리에 로그인 및 푸시
+                    // 여기서 'harbor-credentials'는 젠킨스에 등록한 Credential ID입니다.
+                    docker.withRegistry("https://${HARBOR_URL}", 'harbor-credentials') {
+                        dockerImage.push()
+                        dockerImage.push("latest")
                 }
             }
         }
