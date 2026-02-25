@@ -11,16 +11,15 @@ spec:
     command: ['cat']
     tty: true
   - name: docker
-    image: docker:24.0.7  # 도커 명령어가 포함된 이미지
-    command: ['cat']
+    image: docker:24.0.7-dind  # dind 이미지를 사용해야 내부 설정을 바꿀 수 있습니다.
+    securityContext:
+      privileged: true         # dind 실행을 위해 권한 상승이 필요합니다.
+    env:
+    - name: DOCKER_TLS_CERTDIR
+      value: ""                # TLS 미사용 설정
+    command: ['dockerd-entrypoint.sh']
+    args: ['--insecure-registry=10.30.20.251'] # Harbor 주소를 보안 예외로 등록
     tty: true
-    volumeMounts:
-    - name: dockersock
-      mountPath: /var/run/docker.sock
-  volumes:
-  - name: dockersock
-    hostPath:
-      path: /var/run/docker.sock
 """
         }
     }
@@ -33,8 +32,6 @@ spec:
         HARBOR_URL = "10.30.20.251" 
         IMAGE_NAME = "10.30.20.251/demo/jenkins-build-app"
         TAG = "${env.BUILD_NUMBER}"
-        // Harbor 자격 증명을 변수로 가져옵니다. 
-        // 젠킨스 Credentials ID가 'harbor-credentials'여야 합니다.
         HARBOR_CREDS = credentials('harbor-credentials')
     }
 
@@ -47,32 +44,34 @@ spec:
 
         stage('Build & Test') {
             steps {
-                echo 'Building the source code...'
-                sh 'mvn clean install'
+                container('maven') {
+                    sh 'mvn clean install -DskipTests'
+                }
             }
         }
 
         stage('Docker Build & Push') {
             steps {
                 container('docker') {
-                    echo "Building Docker image: ${IMAGE_NAME}:${TAG}"
-                    
-                    // 1. Harbor 로그인 (https를 명시하지 않고 시도하거나, 안되면 인증서 무시 설정 필요)
-                    // --insecure-registry 옵션은 docker login에서 지원하지 않으므로 
-                    // 보통은 daemon.json 설정이 필요하지만, 여기서는 주소만 넣어서 시도해봅니다.
-                    sh "echo ${HARBOR_CREDS_PSW} | docker login ${HARBOR_URL} -u ${HARBOR_CREDS_USR} --password-stdin"
-                    
-                    // 2. 이미지 빌드
-                    sh "docker build -t ${IMAGE_NAME}:${TAG} ."
-                    
-                    // 3. 이미지 푸시
-                    sh "docker push ${IMAGE_NAME}:${TAG}"
-                    sh "docker tag ${IMAGE_NAME}:${TAG} ${IMAGE_NAME}:latest"
-                    sh "docker push ${IMAGE_NAME}:latest"
+                    script {
+                        // 도커 데몬이 완전히 뜰 때까지 잠시 대기
+                        sh 'sleep 5' 
+                        
+                        echo "Logging in to Harbor: ${HARBOR_URL}"
+                        // 1. Harbor 로그인
+                        sh "echo ${HARBOR_CREDS_PSW} | docker login ${HARBOR_URL} -u ${HARBOR_CREDS_USR} --password-stdin"
+                        
+                        // 2. 이미지 빌드 및 푸시
+                        sh "docker build -t ${IMAGE_NAME}:${TAG} ."
+                        sh "docker push ${IMAGE_NAME}:${TAG}"
+                        
+                        sh "docker tag ${IMAGE_NAME}:${TAG} ${IMAGE_NAME}:latest"
+                        sh "docker push ${IMAGE_NAME}:latest"
+                    }
                 }
             }
         }
-        
+
         stage('Update Manifest') {
             steps {
                 echo 'Updating ArgoCD Manifest Repository...'
