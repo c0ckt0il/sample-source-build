@@ -54,20 +54,21 @@ spec:
 
         stage('Docker Build & Push') {
             steps {
-                // docker 컨테이너 안에서 실행하도록 감싸줍니다.
                 container('docker') {
                     echo "Building Docker image: ${IMAGE_NAME}:${TAG}"
                     
-                    // 1. Harbor 로그인
+                    // 1. Harbor 로그인 (https를 명시하지 않고 시도하거나, 안되면 인증서 무시 설정 필요)
+                    // --insecure-registry 옵션은 docker login에서 지원하지 않으므로 
+                    // 보통은 daemon.json 설정이 필요하지만, 여기서는 주소만 넣어서 시도해봅니다.
                     sh "echo ${HARBOR_CREDS_PSW} | docker login ${HARBOR_URL} -u ${HARBOR_CREDS_USR} --password-stdin"
                     
-                    // 2. 이미지 빌드 및 푸시
+                    // 2. 이미지 빌드
                     sh "docker build -t ${IMAGE_NAME}:${TAG} ."
+                    
+                    // 3. 이미지 푸시
                     sh "docker push ${IMAGE_NAME}:${TAG}"
                     sh "docker tag ${IMAGE_NAME}:${TAG} ${IMAGE_NAME}:latest"
                     sh "docker push ${IMAGE_NAME}:latest"
-                    
-                    sh "docker logout ${HARBOR_URL}"
                 }
             }
         }
