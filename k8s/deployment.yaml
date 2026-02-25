@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: sample-app
-        image: 10.30.20.251/demo/jenkins-build-app:20260225-142647
+        image: 10.30.20.251/demo/jenkins-build-app:20260225-143049
         ports:
         - containerPort: 8080
