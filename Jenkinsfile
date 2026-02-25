@@ -17,6 +17,7 @@ pipeline {
         stage('Build & Test') {
             steps {
                 echo 'Building the source code...'
+                sh 'mvn clean install'
                 // 예: sh './gradlew build' 또는 'npm install'
             }
         }
