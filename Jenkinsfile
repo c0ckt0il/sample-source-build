@@ -54,25 +54,24 @@ spec:
 
         stage('Docker Build & Push') {
             steps {
-                // script { docker.build... } 대신 직접 sh를 사용합니다.
-                echo "Building Docker image: ${IMAGE_NAME}:${TAG}"
-                
-                // 1. Harbor 로그인
-                sh "echo ${HARBOR_CREDS_PSW} | docker login ${HARBOR_URL} -u ${HARBOR_CREDS_USR} --password-stdin"
-                
-                // 2. 이미지 빌드
-                sh "docker build -t ${IMAGE_NAME}:${TAG} ."
-                sh "docker tag ${IMAGE_NAME}:${TAG} ${IMAGE_NAME}:latest"
-                
-                // 3. 이미지 푸시
-                sh "docker push ${IMAGE_NAME}:${TAG}"
-                sh "docker push ${IMAGE_NAME}:latest"
-                
-                // 4. 로그아웃 (보안)
-                sh "docker logout ${HARBOR_URL}"
+                // docker 컨테이너 안에서 실행하도록 감싸줍니다.
+                container('docker') {
+                    echo "Building Docker image: ${IMAGE_NAME}:${TAG}"
+                    
+                    // 1. Harbor 로그인
+                    sh "echo ${HARBOR_CREDS_PSW} | docker login ${HARBOR_URL} -u ${HARBOR_CREDS_USR} --password-stdin"
+                    
+                    // 2. 이미지 빌드 및 푸시
+                    sh "docker build -t ${IMAGE_NAME}:${TAG} ."
+                    sh "docker push ${IMAGE_NAME}:${TAG}"
+                    sh "docker tag ${IMAGE_NAME}:${TAG} ${IMAGE_NAME}:latest"
+                    sh "docker push ${IMAGE_NAME}:latest"
+                    
+                    sh "docker logout ${HARBOR_URL}"
+                }
             }
         }
-
+        
         stage('Update Manifest') {
             steps {
                 echo 'Updating ArgoCD Manifest Repository...'
