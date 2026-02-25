@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: sample-app
-        image: 10.30.20.251/demo/jenkins-build-app:latest # 젠킨스가 태그를 바꿀 위치
+        image: 10.30.20.251/demo/jenkins-build-app:20260225-142121
         ports:
         - containerPort: 8080
