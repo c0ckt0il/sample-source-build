@@ -82,25 +82,33 @@ spec:
 
         stage('Update Manifest') {
             steps {
-                // git 명령어가 포함된 maven 컨테이너에서 실행합니다.
                 container('maven') {
                     withCredentials([usernamePassword(credentialsId: 'git-credentials-id', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                         script {
                             echo "Updating Manifest with Tag: ${env.TAG}..."
                             
-                            // 1. k8s/deployment.yaml 파일 내 이미지 태그 수정
-                            sh "sed -i 's|10.30.20.251/demo/jenkins-build-app:.*|10.30.20.251/demo/jenkins-build-app:${env.TAG}|g' k8s/deployment.yaml"
+                            // 1. 기존에 작업 폴더가 있다면 삭제 (깨끗한 상태로 시작)
+                            sh "rm -rf temp_repo"
                             
-                            // 2. Git 설정 및 Push
-                            sh """
-                            git config user.email "jenkins@heybc.com"
-                            git config user.name "jenkins-bot"
-                            git add k8s/deployment.yaml
-                            git commit -m "chore: update image tag to ${env.TAG} [skip ci]"
+                            // 2. 인증 정보를 포함하여 레포지토리 클론
+                            sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/c0ckt0il/sample-source-build.git temp_repo"
                             
-                            # 인증 정보를 포함하여 push
-                            git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/c0ckt0il/sample-source-build.git HEAD:main
-                            """
+                            // 3. 클론 받은 폴더 내부로 이동해서 작업
+                            dir('temp_repo') {
+                                // Git 사용자 설정 (커밋을 위해 필수)
+                                sh "git config user.email 'jenkins@heybc.com'"
+                                sh "git config user.name 'jenkins-bot'"
+                                
+                                // 태그 업데이트
+                                sh "sed -i 's|10.30.20.251/demo/jenkins-build-app:.*|10.30.20.251/demo/jenkins-build-app:${env.TAG}|g' k8s/deployment.yaml"
+                                
+                                // 변경사항 푸시
+                                sh """
+                                git add k8s/deployment.yaml
+                                git commit -m "chore: update image tag to ${env.TAG} [skip ci]"
+                                git push origin main
+                                """
+                            }
                         }
                     }
                 }
