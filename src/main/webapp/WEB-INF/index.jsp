@@ -48,6 +48,11 @@
     <!-- 이미지 -->
     <img src="<c:url value='/images/cocktail-log.jpg' />" alt="Daegu Logo" style="max-width: 500px; height: auto;"/>
 
+    <p>클러스터 이름: ${clusterName}</p>
+    <p>클러스터 ID: ${clusterId}</p>
+    <p>현재 접속한 Pod: ${hostname}</p>
+    <p>현재 Namespace: ${namespace}</p>
+
     <h1 class="text_h1">글자를 클릭하면 빨간색으로 변경</h1>
     <h4 class="text_h2">글자를 클릭하면 파란색으로 변경</h4>
 
